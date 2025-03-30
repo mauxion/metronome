@@ -54,87 +54,99 @@
 	  <input type="range" id="tempoSlider" min="40" max="200" value="100">
 	  <div class="tempo-display">Tempo: <span id="tempoValue">100</span> BPM</div>
 	</div>
-  <script>
-    const toggleButton = document.getElementById('toggleButton');
-    const tempoSlider = document.getElementById('tempoSlider');
-    const tempoValue = document.getElementById('tempoValue');
+<script>
+  const toggleButton = document.getElementById('toggleButton');
+  const tempoSlider = document.getElementById('tempoSlider');
+  const tempoValue = document.getElementById('tempoValue');
 
-    let isRunning = false;
-    let intervalId = null;
-    let bpm = parseInt(tempoSlider.value);
+  let bpm = parseInt(tempoSlider.value);
+  let isRunning = false;
 
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  let nextNoteTime = 0.0;
+  let timerID = null;
 
-	var idx = 0;
-    function playClick() {
-		if(idx%4 == 0 || idx < 7 || idx == 9 ) {
-		  const oscillator = audioCtx.createOscillator();
-		  const envelope = audioCtx.createGain();
+  // Lookahead scheduler settings
+  const lookahead = 25.0; // in ms
+  const scheduleAheadTime = 0.1; // in seconds
+  var idx=0;
+  function playClick(time) {
+	if(idx%4 == 0 || idx < 7 || idx == 9 ) {
+		const osc = audioCtx.createOscillator();
+		const envelope = audioCtx.createGain();
 
-		  oscillator.type = 'square';
-		  var soundValue;
-		  if(idx%4 == 0) {
+		osc.type = 'square';
+		var soundValue;
+		if(idx%4 == 0) {
 		  soundValue = 500;
 		  }else {
 		  soundValue = 1000;
-		  }
-		  oscillator.frequency.setValueAtTime(soundValue, audioCtx.currentTime);
-
-		  
-		  envelope.gain.setValueAtTime(1, audioCtx.currentTime);
-		  envelope.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-
-		  oscillator.connect(envelope);
-		  envelope.connect(audioCtx.destination);
-
-		  oscillator.start(audioCtx.currentTime);
-		  oscillator.stop(audioCtx.currentTime + 0.05);
 		}
-		idx +=1;
+		osc.frequency.setValueAtTime(soundValue, time);
+		envelope.gain.setValueAtTime(1, time);
+		envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+
+		osc.connect(envelope);
+		envelope.connect(audioCtx.destination);
+
+		osc.start(time);
+		osc.stop(time + 0.05);
+	}
+	idx+=1;
+  }
+
+  function nextNote() {
+    const secondsPerBeat = 60.0 / bpm;
+    nextNoteTime += secondsPerBeat;
+  }
+
+  function scheduler() {
+    while (nextNoteTime < audioCtx.currentTime + scheduleAheadTime) {
+      playClick(nextNoteTime);
+      nextNote();
     }
- 
-    function startMetronome() {
-      const interval = (60 / bpm) * 1000;
-      playClick();
-      intervalId = setInterval(playClick, interval);
+    timerID = setTimeout(scheduler, lookahead);
+  }
+
+  function startMetronome() {
+    nextNoteTime = audioCtx.currentTime + 0.05;
+    scheduler();
+  }
+
+  function stopMetronome() {
+    clearTimeout(timerID);
+    timerID = null;
+  }
+
+  toggleButton.addEventListener('click', () => {
+    if (!isRunning) {
+      startMetronome();
+      toggleButton.textContent = 'Stop';
+      isRunning = true;
+    } else {
+      stopMetronome();
+      toggleButton.textContent = 'Start';
+      isRunning = false;
     }
+  });
 
-    function stopMetronome() {
-      clearInterval(intervalId);
-      intervalId = null;
-	  idx = 0;
+  tempoSlider.addEventListener('input', () => {
+    bpm = parseInt(tempoSlider.value);
+    tempoValue.textContent = bpm;
+
+    if (isRunning) {
+      stopMetronome();
+      startMetronome();
     }
+  });
 
-    toggleButton.addEventListener('click', () => {
-      if (!isRunning) {
-        startMetronome();
-        toggleButton.textContent = 'Stop';
-        isRunning = true;
-      } else {
-        stopMetronome();
-        toggleButton.textContent = 'Start';
-        isRunning = false;
-      }
-    });
-
-    tempoSlider.addEventListener('input', () => {
-      bpm = parseInt(tempoSlider.value);
-      tempoValue.textContent = bpm;
-
-      if (isRunning) {
-        stopMetronome();
-        startMetronome();
-      }
-    });
-	document.addEventListener('keydown', (event) => {
-		if (event.code === 'Space') {
-		  event.preventDefault();
-		  toggleButton.click();
-		}
-    });
-	
-	playClick();
-	idx=0;
-  </script>
+  // Keyboard shortcut for spacebar
+  document.addEventListener('keydown', (event) => {
+    if (event.code === 'Space') {
+      event.preventDefault();
+      toggleButton.click();
+    }
+  });
+</script>
 </body>
 </html>
