@@ -74,8 +74,7 @@
 		<button id="tempoUpBtn"  class="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-2 px-6 rounded-lg shadow mb-6 transition text-2xl"
 		 
 		>+</button>
-	</div>
-	
+	</div>	
 	
 	
 	<div class="relative mb-6 w-64 flex gap-2 w-full justify-center">
@@ -85,14 +84,77 @@
 		<input id="volumeSlider" type="range" value="70" min="0" max="100" class="w-64 range-lg bg-gray-200 rounded-lg cursor-pointer accent-cyan-500 dark:bg-gray-700"> 
 	</div>
 	
+ 
+	<div class="relative mb-6 w-64 flex gap-2 w-full justify-center">
 
+		<label for="timeSignature" class="block mb-2 text-sm font-medium">Time Signature</label>
+		<select id="timeSignature" class="bg-gray-50 w-32 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+			<option value="3">3/4</option>
+			<option value="4" selected>4/4</option>
+			<option value="5">5/4</option>
+			<option value="6">6/4</option>
+			<option value="7">7/4</option>
+			<option value="9">9/4</option>
+			<option value="11">11/4</option>			
+		</select> 
+	</div>
+	
+<script>  
+	let remainEvery = 1;
+
+	function handleRemainEvery(event) {
+		remainEvery = event.value;
+	} 
+	let recoveryEvery = 16;
+	function handleRecoveryEvery(event) {
+		recoveryEvery = event.value;
+	}
+</script>
+	
+	
+	<fieldset>
+		<legend>Metronome will remain every </legend>
+		<div>
+			<input onchange="handleRemainEvery(this);" type="radio" id="remainEvery1" name="remainEvery" value="1" checked/>
+			<label for="remainEvery1">1 bar</label>
+
+			<input onchange="handleRemainEvery(this);"  type="radio" id="remainEvery2" name="remainEvery" value="2" />
+			<label for="remainEvery2">2 bars</label>
+
+			<input onchange="handleRemainEvery(this);"  type="radio" id="remainEvery3" name="remainEvery" value="3" />
+			<label for="remainEvery3">3 bars</label>	
+			
+			<input onchange="handleRemainEvery(this);"  type="radio" id="remainEvery4" name="remainEvery" value="4" />
+			<label for="remainEvery4">4 bars</label>
+		</div> 
+	</fieldset>		
+	<fieldset>
+		<legend>Metronome will recovery every </legend>
+		<div>
+			<input onchange="handleRecoveryEvery(this);" type="radio" id="recoveryEvery1" name="recoveryEvery" value="0" checked/>
+			<label for="recoveryEvery1">0 bars</label>
+
+			<input onchange="handleRecoveryEvery(this);"  type="radio" id="recoveryEvery4" name="recoveryEvery" value="4" />
+			<label for="recoveryEvery4">4 bars</label>
+
+			<input onchange="handleRecoveryEvery(this);"  type="radio" id="recoveryEvery8" name="recoveryEvery" value="8" />
+			<label for="recoveryEvery8">8 bars</label>	
+			
+			<input onchange="handleRecoveryEvery(this);"  type="radio" id="recoveryEvery16" name="recoveryEvery" value="16" />
+			<label for="recoveryEvery16">16 bars</label>
+		</div> 
+	</fieldset>		
+	
+	
+	
   <script>
   const toggleButton = document.getElementById('toggleButton');
   const tempoSlider = document.getElementById('tempoSlider');
   const tempoValue = document.getElementById('tempoValue');
+  const timeSignature = document.getElementById('timeSignature');
   
   const volumeSlider = document.getElementById('volumeSlider');
-  let volume = 70;
+  let generalVolume = 70;
 
   let bpm = parseInt(tempoSlider.value);
   let isRunning = false;
@@ -104,6 +166,12 @@
   // Lookahead scheduler settings
   const lookahead = 25.0; // in ms
   const scheduleAheadTime = 0.1; // in seconds
+  
+  let beats = 4;
+  let bars = 4;
+  
+  
+  
   var idx=0;
   function setTempo(newTempo){
 	if (newTempo > 19 && newTempo < 181) {
@@ -116,21 +184,37 @@
 		}
 	}
   }
-  function playClick(time) {
-	if(idx%4 == 0 || idx < 7 || idx == 9 ) {
-		const osc = audioCtx.createOscillator();
-		const envelope = audioCtx.createGain();
+  
 
-		osc.type = 'square';
-		var soundValue;
-		if(idx%4 == 0) {
-		  soundValue = 500;
-		  }else {
-		  soundValue = 1000;
+  function playClick(time) {	
+	let measureNumber = ~~(idx/beats)+1;	
+	let volume = generalVolume/100.0
+	if (idx % (beats*remainEvery)!=0) {
+		if(measureNumber != 0) {
+			volume = volume/(measureNumber*2);
+		}
+	}	
+ 	
+	if (recoveryEvery && (measureNumber-1)%recoveryEvery == 0) {		
+		if(idx % beats !=0){
+			volume = generalVolume/400.0
+		}  else {
+			volume = generalVolume/100.0
 		}		
-				
-		osc.frequency.setValueAtTime(soundValue, time);
-		envelope.gain.setValueAtTime(volume/100.0, time);
+	}
+	
+	if (volume>0.1) {	
+		const osc = audioCtx.createOscillator();
+		const envelope = audioCtx.createGain();		
+		osc.type = 'square';
+		var soundFrequency;
+		if(idx%beats == 0) {
+		  soundFrequency = 500;
+		  }else {
+		  soundFrequency = 1000;
+		}						
+		osc.frequency.setValueAtTime(soundFrequency, time);
+		envelope.gain.setValueAtTime(volume, time);
 		envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
 
 		osc.connect(envelope);
@@ -138,6 +222,7 @@
 
 		osc.start(time);
 		osc.stop(time + 0.05);
+		
 	}
 	idx+=1;
   }
@@ -178,29 +263,34 @@
     }
   });
 
-  tempoSlider.addEventListener('input', () => {
-    bpm = parseInt(tempoSlider.value);
-    tempoValue.textContent = bpm;
+	tempoSlider.addEventListener('input', () => {
+		bpm = parseInt(tempoSlider.value);
+		tempoValue.textContent = bpm;
 
-    if (isRunning) {
-      stopMetronome();
-      startMetronome();
-    }
-  });
+		if (isRunning) {
+		  stopMetronome();
+		  startMetronome();
+	}
+	});
+  
+	timeSignature.addEventListener("change", (event) => {
+		beats =  event.target.value;
+		setTempo(bpm);
+	});  
   
   
-  volumeSlider.addEventListener('input', () => {
-    volume = parseInt(volumeSlider.value);
-  });
+	volumeSlider.addEventListener('input', () => {
+		generalVolume = parseInt(volumeSlider.value);
+	});
 
 
-  // Keyboard shortcut for spacebar
-  document.addEventListener('keydown', (event) => {
-    if (event.code === 'Space') {
-      event.preventDefault();
-      toggleButton.click();
-    }
-  });
+	// Keyboard shortcut for spacebar
+	document.addEventListener('keydown', (event) => {
+		if (event.code === 'Space') {
+		  event.preventDefault();
+		  toggleButton.click();
+		}
+	});
   
   
   
