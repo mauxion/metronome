@@ -105,7 +105,7 @@
 	function handleRemainEvery(event) {
 		remainEvery = event.value;
 	} 
-	let recoveryEvery = 16;
+	let recoveryEvery = 8;
 	function handleRecoveryEvery(event) {
 		recoveryEvery = event.value;
 	}
@@ -131,13 +131,13 @@
 	<fieldset>
 		<legend>Metronome will recovery every </legend>
 		<div>
-			<input onchange="handleRecoveryEvery(this);" type="radio" id="recoveryEvery1" name="recoveryEvery" value="0" checked/>
+			<input onchange="handleRecoveryEvery(this);" type="radio" id="recoveryEvery1" name="recoveryEvery" value="0" />
 			<label for="recoveryEvery1">0 bars</label>
 
 			<input onchange="handleRecoveryEvery(this);"  type="radio" id="recoveryEvery4" name="recoveryEvery" value="4" />
 			<label for="recoveryEvery4">4 bars</label>
 
-			<input onchange="handleRecoveryEvery(this);"  type="radio" id="recoveryEvery8" name="recoveryEvery" value="8" />
+			<input onchange="handleRecoveryEvery(this);"  type="radio" id="recoveryEvery8" name="recoveryEvery" value="8" checked/>
 			<label for="recoveryEvery8">8 bars</label>	
 			
 			<input onchange="handleRecoveryEvery(this);"  type="radio" id="recoveryEvery16" name="recoveryEvery" value="16" />
@@ -221,8 +221,10 @@
 		envelope.connect(audioCtx.destination);
 
 		osc.start(time);
-		osc.stop(time + 0.05);
+		osc.stop(time + 0.2);
 		
+	} else {
+		audioCtx.resume(); // Call this after user interaction
 	}
 	idx+=1;
   }
