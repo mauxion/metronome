@@ -30,41 +30,7 @@
     Start
   </button>
 
- 
-  
-  <div class="relative mb-6 w-full">
-    <label for="labels-range-input" class="sr-only">Labels range</label>
-    <input id="tempoSlider" type="range" value="100" min="20" max="180" class="w-full range-lg h-2 bg-gray-200 rounded-lg cursor-pointer accent-cyan-500 dark:bg-gray-700">
-        <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-0 -bottom-6 cursor-pointer"
-		onClick="setTempo(20)"
-	>20</span>	 
-    <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-1/8 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
-		onClick="setTempo(40)"
-	>40</span>
-    <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-1/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
-		onClick="setTempo(60)"
-	>60</span>
-    <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-3/8 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
-		onClick="setTempo(80)"
-	>80</span>
-    <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-1/2 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
-		onClick="setTempo(100)"
-	>100</span>
-    <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-5/8 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
-		onClick="setTempo(120)"
-	>120</span>
-    <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-3/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
-		onClick="setTempo(140)"
-	>140</span>
-    <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-7/8 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
-		onClick="setTempo(160)"
-	>160</span>
-    <span class="text-sm text-gray-500 dark:text-gray-400 absolute end-0 -bottom-6 cursor-pointer"
-		onClick="setTempo(180)"
-	>180</span>
-</div>
-
-	<div class="flex gap-4">
+ 	<div class="flex gap-4">
 		<button id="tempoDwnBtn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-2 px-6 rounded-lg shadow mb-6 transition text-2xl"
 		 
 		>-</button>
@@ -75,6 +41,41 @@
 		 
 		>+</button>
 	</div>	
+  
+  <div class="relative mb-6 w-full">
+    <label for="labels-range-input" class="sr-only">Labels range</label>
+	<span class="text-sm bottom-6 text-gray-500 dark:text-gray-400 absolute start-0 -bottom-6 cursor-pointer"
+		onClick="setTempo(20)"
+	>20</span>	 
+    <span class="text-sm bottom-6 text-gray-500 dark:text-gray-400 absolute start-1/8 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
+		onClick="setTempo(40)"
+	>40</span>
+    <span class="text-sm bottom-6 text-gray-500 dark:text-gray-400 absolute start-1/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
+		onClick="setTempo(60)"
+	>60</span>
+    <span class="text-sm bottom-6 text-gray-500 dark:text-gray-400 absolute start-3/8 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
+		onClick="setTempo(80)"
+	>80</span>
+    <span class="text-sm bottom-6 text-gray-500 dark:text-gray-400 absolute start-1/2 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
+		onClick="setTempo(100)"
+	>100</span>
+    <span class="text-sm bottom-6 text-gray-500 dark:text-gray-400 absolute start-5/8 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
+		onClick="setTempo(120)"
+	>120</span>
+    <span class="text-sm bottom-6 text-gray-500 dark:text-gray-400 absolute start-3/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
+		onClick="setTempo(140)"
+	>140</span>
+    <span class="text-sm bottom-6 text-gray-500 dark:text-gray-400 absolute start-7/8 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 cursor-pointer"
+		onClick="setTempo(160)"
+	>160</span>
+    <span class="text-sm bottom-6 text-gray-500 dark:text-gray-400 absolute end-0 -bottom-6 cursor-pointer"
+		onClick="setTempo(180)"
+	>180</span>
+    <input id="tempoSlider" type="range" value="100" min="20" max="180" class="w-full range-lg h-2 bg-gray-200 rounded-lg cursor-pointer accent-cyan-500 dark:bg-gray-700">
+    
+</div>
+
+
 	
 	
 	<div class="relative mb-6 w-64 flex gap-2 w-full justify-center">
