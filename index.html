@@ -294,8 +294,9 @@
 
 		if (isRunning) {
 		  stopMetronome();
-		  startMetronome();
-	}
+		  startMetronome();		
+		}
+		updateBiggestIntervalMs();
 	});
   
 	timeSignature.addEventListener("change", (event) => {
