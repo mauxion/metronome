@@ -41,7 +41,8 @@
 		 
 		>+</button>
 	</div>	
-  
+	
+  <div class="flex gap-2" style="margin-top: -30px;">найбільший проміжок між кліками <span id="biggestInterval">2.4 секунди</span></div>
   <div class="relative mb-6 w-full">
     <label for="labels-range-input" class="sr-only">Labels range</label>
 	<span class="text-sm bottom-6 text-gray-500 dark:text-gray-400 absolute start-0 -bottom-6 cursor-pointer"
@@ -153,8 +154,11 @@
   const tempoSlider = document.getElementById('tempoSlider');
   const tempoValue = document.getElementById('tempoValue');
   const timeSignature = document.getElementById('timeSignature');
+  const biggestInterval = document.getElementById('biggestInterval');
   
   const volumeSlider = document.getElementById('volumeSlider');
+  
+  
   let generalVolume = 70;
 
   let bpm = parseInt(tempoSlider.value);
@@ -171,6 +175,22 @@
   let beats = 4;
   let bars = 4;
   
+  function updateBiggestIntervalMs(){
+	const oneBeatIntervalMs = (60/bpm)*1000;
+	const oneBarInterlvalMs = oneBeatIntervalMs*beats;
+	const biggestIntervalMs = Math.round(remainEvery* oneBarInterlvalMs);	 
+	const s = Math.round(biggestIntervalMs / 10)/100;
+	
+	if (Number.isInteger(s)){		
+		if([2,3,4].includes(s)){
+			biggestInterval.innerHTML =  s + ' секунди';	
+		} else {
+			biggestInterval.innerHTML =  s + ' секунд';				
+		}		
+	}else {
+		biggestInterval.innerHTML =  s + ' секунди';	
+	}			 
+  }
   
   
   var idx=0;
@@ -183,6 +203,7 @@
 			stopMetronome();
 			startMetronome();
 		}
+		updateBiggestIntervalMs();
 	}
   }
   
